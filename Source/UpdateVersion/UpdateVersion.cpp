@@ -1,10 +1,16 @@
 #include <stdlib.h>
 #include <memory>
-#include <Common\path.h>
-#include <Common\FileClass.h>
-#include <Common\StdString.h>
+#include "Common/path.h"
+#include "Common/FileClass.h"
+#include "Common/StdString.h"
 
-int main()
+//Not sure why it should be case insensive. Let FS handle it?
+#ifndef _WIN32
+#include <string.h>
+#define _strnicmp strncmp
+#endif //_WIN32
+
+int main(int __argc, const char** __argv)
 {
     if (__argc < 4)
     {
