@@ -10,7 +10,7 @@
 ****************************************************************************/
 #include "stdafx.h"
 #include "SettingsType-Cheats.h"
-#include <Project64-core\N64System\CheatClass.h>
+#include "Project64-core/N64System/CheatClass.h"
 
 CIniFile * CSettingTypeCheats::m_CheatIniFile = NULL;
 std::string * CSettingTypeCheats::m_SectionIdent = NULL;
