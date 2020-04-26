@@ -1378,7 +1378,7 @@ void CN64System::SyncCPU(CN64System * const SecondCPU)
 
     if (bFastSP() && m_Recomp)
     {
-        if (m_Recomp->MemoryStackPos() != (uint32_t)(m_MMU_VM.Rdram() + (m_Reg.m_GPR[29].W[0] & 0x1FFFFFFF)))
+        if (m_Recomp->MemoryStackPos() != (size_t)(m_MMU_VM.Rdram() + (m_Reg.m_GPR[29].W[0] & 0x1FFFFFFF)))
         {
             ErrorFound = true;
         }
@@ -1547,9 +1547,9 @@ void CN64System::DumpSyncErrors(CN64System * SecondCPU)
         }
         if (bFastSP() && m_Recomp)
         {
-            if (m_Recomp->MemoryStackPos() != (uint32_t)(m_MMU_VM.Rdram() + (m_Reg.m_GPR[29].W[0] & 0x1FFFFFFF)))
+            if (m_Recomp->MemoryStackPos() != (size_t)(m_MMU_VM.Rdram() + (m_Reg.m_GPR[29].W[0] & 0x1FFFFFFF)))
             {
-                Error.LogF("MemoryStack = %X  should be: %X\r\n", m_Recomp->MemoryStackPos(), (uint32_t)(m_MMU_VM.Rdram() + (m_Reg.m_GPR[29].W[0] & 0x1FFFFFFF)));
+                Error.LogF("MemoryStack = %X  should be: %X\r\n", m_Recomp->MemoryStackPos(), (size_t)(m_MMU_VM.Rdram() + (m_Reg.m_GPR[29].W[0] & 0x1FFFFFFF)));
             }
         }
 
@@ -1585,9 +1585,9 @@ void CN64System::DumpSyncErrors(CN64System * SecondCPU)
         Error.LogF("Current Timer,0x%X\r\n", m_NextTimer);
         Error.LogF("Timer Type,0x%X\r\n", m_SystemTimer.CurrentType());
         Error.Log("\r\n");
-        for (int i = 0; i < (sizeof(m_LastSuccessSyncPC) / sizeof(m_LastSuccessSyncPC[0])); i++)
+        for (size_t i = 0; i < (sizeof(m_LastSuccessSyncPC) / sizeof(m_LastSuccessSyncPC[0])); i++)
         {
-            Error.LogF("LastSuccessSyncPC[%d],0x%X\r\n", i, m_LastSuccessSyncPC[i]);
+            Error.LogF("LastSuccessSyncPC[%zu],0x%X\r\n", i, m_LastSuccessSyncPC[i]);
         }
         Error.Log("\r\n");
         for (count = 0; count < 32; count++)
@@ -2138,7 +2138,7 @@ bool CN64System::LoadState(const char * FileName)
     {
         if (m_SyncCPU)
         {
-            for (int i = 0; i < (sizeof(m_LastSuccessSyncPC) / sizeof(m_LastSuccessSyncPC[0])); i++)
+            for (size_t i = 0; i < (sizeof(m_LastSuccessSyncPC) / sizeof(m_LastSuccessSyncPC[0])); i++)
             {
                 m_LastSuccessSyncPC[i] = 0;
             }
