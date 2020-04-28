@@ -1,4 +1,6 @@
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 set(COMMON_SOURCE_FILES 
     CriticalSection.cpp
     DateTimeClass.cpp

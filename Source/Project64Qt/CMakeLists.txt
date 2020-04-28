@@ -15,4 +15,4 @@ add_executable(Project64
     main.cpp
 )
 
-target_link_libraries(Project64 Qt5::Widgets Common) 
+target_link_libraries(Project64 Qt5::Widgets Common Project64-core Project64-video)
