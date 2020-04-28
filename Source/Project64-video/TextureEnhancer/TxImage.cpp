@@ -19,6 +19,7 @@
  /* check 8 bytes. use a larger value if needed. */
 #define PNG_CHK_BYTES 8
 
+#include <cstring>
 #include "TxImage.h"
 #include "TxReSample.h"
 #include "TxDbg.h"

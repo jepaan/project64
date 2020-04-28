@@ -15,6 +15,7 @@
 #pragma warning(disable: 4786)
 #endif
 
+#include <cstring>
 #include <Common/path.h>
 #include <Common/StdString.h>
 #include <Project64-video/Renderer/types.h>
