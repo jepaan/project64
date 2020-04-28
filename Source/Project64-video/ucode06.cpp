@@ -21,6 +21,7 @@
 #include "TexCache.h"
 #include "TexBuffer.h"
 #include "ucode06.h"
+#include <cstring>
 
 // STANDARD DRAWIMAGE - draws a 2d image based on the following structure
 

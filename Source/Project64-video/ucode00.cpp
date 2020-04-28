@@ -16,6 +16,7 @@
 #include <Project64-video/trace.h>
 #include <Project64-video/ucode.h>
 #include <math.h>
+#include <cstring>
 #include "3dmath.h"
 #include "Util.h"
 

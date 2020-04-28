@@ -8,6 +8,7 @@
 * GNU/GPLv2 http://www.gnu.org/licenses/gpl-2.0.html                        *
 *                                                                           *
 ****************************************************************************/
+#include <cstring>
 #include <Common/StdString.h>
 #include <Settings/Settings.h>
 #include <Project64-video/trace.h>

@@ -17,9 +17,10 @@
 #include <Project64-video/trace.h>
 #include <Project64-video/ucode.h>
 #include <math.h>
+#include <cstring>
 #include "3dmath.h"
 #include "ucode00.h"
-#include "util.h"
+#include "Util.h"
 
 int cur_mtx = 0;
 int billboarding = 0;
