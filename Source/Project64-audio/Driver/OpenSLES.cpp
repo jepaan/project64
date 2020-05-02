@@ -13,6 +13,7 @@
 * GNU/GPLv2 http://www.gnu.org/licenses/gpl-2.0.html                        *
 *                                                                           *
 ****************************************************************************/
+#include <cstring>
 #include "OpenSLES.h"
 #include <Project64-audio/trace.h>
 #include <Project64-audio/SettingsID.h>

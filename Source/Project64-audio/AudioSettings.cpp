@@ -8,6 +8,7 @@
 * GNU/GPLv2 http://www.gnu.org/licenses/gpl-2.0.html                        *
 *                                                                           *
 ****************************************************************************/
+#include <cstring>
 #include <Settings/Settings.h>
 #include <Project64-audio/trace.h>
 #include "SettingsID.h"

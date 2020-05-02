@@ -19,7 +19,7 @@
 #else
 #include <Project64-audio/Driver/OpenSLES.h>
 #endif
-#include "audio_1.1.h"
+#include "Audio_1.1.h"
 #include "Version.h"
 #include <stdio.h>
 #include <string.h>
