@@ -172,7 +172,7 @@ const char * AppName(void)
     return ApplicationName.c_str();
 }
 
-static bool ParseCommand(int32_t argc, const char **argv)
+static bool ParseCommand(int32_t argc, char **argv)
 {
     if (argc <= 1)
     {
@@ -212,7 +212,7 @@ static bool ParseCommand(int32_t argc, const char **argv)
     return false;
 }
 
-bool AppInit(CNotification * Notify, const char * BaseDirectory, int argc, const char **argv)
+bool AppInit(CNotification * Notify, const char * BaseDirectory, int argc, char **argv)
 {
     try
     {
