@@ -208,3 +208,4 @@ set(CORE_SOURCE_FILES
 include_directories(..)
 
 add_library(Project64-core STATIC ${CORE_SOURCE_FILES})
+target_link_libraries(Project64-core Common)
