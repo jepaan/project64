@@ -397,11 +397,16 @@ void CSettings::AddHowToHandleSetting(const char * BaseDirectory)
 	AddHandler(Plugin_AUDIO_Current, new CSettingTypeApplication("Plugin", "Audio Dll", "Audio\\Project64-Audio.dll"));
 #endif
     AddHandler(Plugin_CONT_Current, new CSettingTypeApplication("Plugin", "Controller Dll", "Input\\PJ64_NRage.dll"));
-#else
+#elif ANDROID
     AddHandler(Plugin_RSP_Current, new CSettingTypeApplication("Plugin", "RSP Dll", "libProject64-rsp-hle.so"));
     AddHandler(Plugin_GFX_Current, new CSettingTypeApplication("Plugin", "Graphics Dll", "libProject64-gfx.so"));
     AddHandler(Plugin_AUDIO_Current, new CSettingTypeApplication("Plugin", "Audio Dll", "libProject64-audio-android.so"));
     AddHandler(Plugin_CONT_Current, new CSettingTypeApplication("Plugin", "Controller Dll", "libProject64-input-android.so"));
+#else
+    //These paths are temporary. Need to figure out a better solution
+    AddHandler(Plugin_RSP_Current, new CSettingTypeApplication("Plugin", "RSP Dll", "RSP/libRSP.so"));
+    AddHandler(Plugin_GFX_Current, new CSettingTypeApplication("Plugin", "Graphics Dll", "Video/libProject64-video.so"));
+    AddHandler(Plugin_AUDIO_Current, new CSettingTypeApplication("Plugin", "Audio Dll", "Audio/libProject64-audio.so"));
 #endif
     AddHandler(Plugin_RSP_CurVer, new CSettingTypeApplication("Plugin", "RSP Dll Ver", ""));
     AddHandler(Plugin_GFX_CurVer, new CSettingTypeApplication("Plugin", "Graphics Dll Ver", ""));
