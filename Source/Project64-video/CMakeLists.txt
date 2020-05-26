@@ -157,5 +157,5 @@ set(VIDEO_SOURCE_FILES
 include_directories(..)
 include_directories(.)
 
-add_library(Project64-video SHARED ${VIDEO_SOURCE_FILES})
+add_library(Project64-video MODULE ${VIDEO_SOURCE_FILES})
 target_link_libraries(Project64-video Common Settings ${PNG_LIBRARY})
