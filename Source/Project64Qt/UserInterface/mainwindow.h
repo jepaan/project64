@@ -3,11 +3,13 @@
 
 #include <QMainWindow>
 
+#include "Project64-core/Plugin.h"
+
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow, public RenderWindow
 {
     Q_OBJECT
 
@@ -17,6 +19,12 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    // RenderWindow interface
+public:
+    virtual void GfxThreadInit() override;
+    virtual void GfxThreadDone() override;
+    virtual void SwapWindow() override;
 };
 
 #endif // MAINWINDOW_H

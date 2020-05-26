@@ -12,3 +12,16 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+
+void MainWindow::GfxThreadInit()
+{
+}
+
+void MainWindow::GfxThreadDone()
+{
+}
+
+void MainWindow::SwapWindow()
+{
+}
