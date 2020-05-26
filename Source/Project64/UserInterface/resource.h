@@ -350,6 +350,7 @@
 #define IDC_RDB_AUTHOR                  1159
 #define IDC_RANDOMIZE_SIPI_INTERRUPTS   1159
 #define IDC_RDB_VERSION                 1160
+#define IDC_PROTECT_MEMORY              1160
 #define IDC_RDB_DATE                    1161
 #define IDC_CHT                         1162
 #define IDC_CHT_AUTHOR                  1163
@@ -717,6 +718,7 @@
 #define IDC_STATUSBAR                   1572
 #define IDC_CMB_JUMP                    1573
 #define IDC_COPYTABREGISTERS_BTN        1574
+#define IDC_MEMORY_SIZE_NOTE            1574
 #define IDC_F0_LBL                      1575
 #define IDC_F1_LBL                      1576
 #define IDC_F2_LBL                      1577
@@ -936,12 +938,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        211
-#define _APS_NEXT_COMMAND_VALUE         40092
-#define _APS_NEXT_CONTROL_VALUE         1516
 #define _APS_NEXT_RESOURCE_VALUE        219
 #define _APS_NEXT_COMMAND_VALUE         40121
-#define _APS_NEXT_CONTROL_VALUE         1574
+#define _APS_NEXT_CONTROL_VALUE         1575
 #define _APS_NEXT_SYMED_VALUE           102
 #endif
 #endif

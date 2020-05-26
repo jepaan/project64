@@ -27,6 +27,9 @@ typedef enum {
     SYM_S64,
     SYM_FLOAT,
     SYM_DOUBLE,
+    SYM_VECTOR2,
+    SYM_VECTOR3,
+    SYM_VECTOR4,
     NUM_SYM_TYPES
 } symbol_type_id_t;
 
@@ -85,7 +88,7 @@ public:
     void Save();
     void ParseErrorAlert(char* message, int lineNumber);
 
-    void AddSymbol(int type, uint32_t address, char* name, char* description = NULL);
+    void AddSymbol(int type, uint32_t address, const char* name, const char* description = NULL);
     void Reset();
     int  GetCount();
     bool GetSymbolById(int id, CSymbol* symbol);
@@ -112,7 +115,7 @@ public:
     {
     }
 
-    CSymbol(int id, int type, uint32_t address, char* name, char* description) :
+    CSymbol(int id, int type, uint32_t address, const char* name, const char* description) :
         m_Id(id),
         m_Type(type),
         m_Address(address),

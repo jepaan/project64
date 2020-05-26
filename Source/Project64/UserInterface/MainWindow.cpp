@@ -100,7 +100,7 @@ CMainGui::~CMainGui(void)
 
 bool CMainGui::RegisterWinClass(void)
 {
-    stdstr_f VersionDisplay("Project64 %s", VER_FILE_VERSION_STR);
+    std::wstring VersionDisplay = stdstr_f("Project64 %s", VER_FILE_VERSION_STR).ToUTF16();
 
     WNDCLASS wcl;
 
@@ -256,6 +256,10 @@ void CMainGui::GameCpuRunning(CMainGui * Gui)
     }
     else
     {
+        if (Gui->m_CheatsUI.m_hWnd != NULL)
+        {
+            Gui->m_CheatsUI.SendMessage(WM_COMMAND, MAKELONG(IDCANCEL, 0));
+        }
         PostMessage(Gui->m_hMainWindow, WM_GAME_CLOSED, 0, 0);
     }
 }
@@ -466,6 +470,11 @@ bool CMainGui::ResetPluginsInUiThread(CPlugins * plugins, CN64System * System)
     return bRes;
 }
 
+void CMainGui::DisplayCheatsUI(bool BlockExecution)
+{
+    m_CheatsUI.Display(m_hMainWindow, BlockExecution);
+}
+
 void CMainGui::BringToTop(void)
 {
     CGuard Guard(m_CS);
@@ -499,7 +508,7 @@ void CMainGui::Create(const char * WindowTitle)
 
 void CMainGui::CreateStatusBar(void)
 {
-    m_hStatusWnd = (HWND)CreateStatusWindow(WS_CHILD | WS_VISIBLE, "", m_hMainWindow, StatusBarID);
+    m_hStatusWnd = (HWND)CreateStatusWindow(WS_CHILD | WS_VISIBLE, L"", m_hMainWindow, StatusBarID);
     SendMessage((HWND)m_hStatusWnd, SB_SETTEXT, 0, (LPARAM)"");
 }
 
@@ -509,11 +518,6 @@ WPARAM CMainGui::ProcessAllMessages(void)
 
     while (GetMessage(&msg, NULL, 0, 0))
     {
-        if (g_cheatUI != NULL && g_cheatUI->IsCheatMessage(&msg))
-        {
-            continue;
-        }
-
         if (m_ResetPlugins)
         {
             m_ResetPlugins = false;
@@ -521,7 +525,10 @@ WPARAM CMainGui::ProcessAllMessages(void)
             SetEvent(m_ResetInfo->hEvent);
             m_ResetInfo = NULL;
         }
-        if (g_cheatUI && g_cheatUI->IsCheatMessage(&msg)) { continue; }
+        if (m_CheatsUI.m_hWnd != NULL && IsDialogMessage(m_CheatsUI.m_hWnd, &msg))
+        {
+            continue;
+        }
         if (m_Menu->ProcessAccelerator(m_hMainWindow, &msg)) { continue; }
         TranslateMessage(&msg);
         DispatchMessage(&msg);
@@ -700,7 +707,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
             //record class for future usage
             LPCREATESTRUCT lpcs = (LPCREATESTRUCT)lParam;
             CMainGui * _this = (CMainGui *)lpcs->lpCreateParams;
-            SetProp(hWnd, "Class", _this);
+            SetProp(hWnd, L"Class", _this);
 
             _this->m_hMainWindow = hWnd;
             _this->CreateStatusBar();
@@ -722,7 +729,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
         case SC_SCREENSAVE:
         case SC_MONITORPOWER:
             {
-                CMainGui * _this = (CMainGui *)GetProp(hWnd, "Class");
+                CMainGui * _this = (CMainGui *)GetProp(hWnd, L"Class");
                 if (_this &&
                     _this->bCPURunning() &&
                     !g_Settings->LoadBool(GameRunning_CPU_Paused) &&
@@ -734,7 +741,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
             break;
         case SC_MAXIMIZE:
             {
-                CMainGui * _this = (CMainGui *)GetProp(hWnd, "Class");
+                CMainGui * _this = (CMainGui *)GetProp(hWnd, L"Class");
                 if (_this)
                 {
                     if (_this->RomBrowserVisible())
@@ -749,7 +756,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
         break;
     case WM_MOVE:
         {
-            CMainGui * _this = (CMainGui *)GetProp(hWnd, "Class");
+            CMainGui * _this = (CMainGui *)GetProp(hWnd, L"Class");
 
             if (!_this->m_bMainWindow ||
                 !_this->m_Created ||
@@ -804,14 +811,14 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
         if (wParam == Timer_SetWindowPos)
         {
             KillTimer(hWnd, Timer_SetWindowPos);
-            CMainGui * _this = (CMainGui *)GetProp(hWnd, "Class");
+            CMainGui * _this = (CMainGui *)GetProp(hWnd, L"Class");
             _this->SaveWindowLoc();
             break;
         }
         break;
     case WM_SIZE:
         {
-            CMainGui * _this = (CMainGui *)GetProp(hWnd, "Class");
+            CMainGui * _this = (CMainGui *)GetProp(hWnd, L"Class");
             if (_this) { _this->Resize(wParam, LOWORD(lParam), HIWORD(lParam)); }
             if (_this)
             {
@@ -835,7 +842,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
         break;
     case WM_NOTIFY:
         {
-            CMainGui * _this = (CMainGui *)GetProp(hWnd, "Class");
+            CMainGui * _this = (CMainGui *)GetProp(hWnd, L"Class");
             if (_this == NULL || !_this->RomBrowserVisible() || !_this->RomListNotify(wParam, lParam))
             {
                 return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -844,7 +851,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
         break;
     case WM_DRAWITEM:
         {
-            CMainGui * _this = (CMainGui *)GetProp(hWnd, "Class");
+            CMainGui * _this = (CMainGui *)GetProp(hWnd, L"Class");
             if (_this)
             {
                 if (!_this->RomListDrawItem(wParam, lParam))
@@ -870,7 +877,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
         break;
     case WM_KEYUP:
         {
-            CMainGui * _this = (CMainGui *)GetProp(hWnd, "Class");
+            CMainGui * _this = (CMainGui *)GetProp(hWnd, L"Class");
 
             if (_this->m_bMainWindow && bCPURunning())
             {
@@ -885,7 +892,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
         break;
     case WM_KEYDOWN:
         {
-            CMainGui * _this = (CMainGui *)GetProp(hWnd, "Class");
+            CMainGui * _this = (CMainGui *)GetProp(hWnd, L"Class");
 
             if (_this->m_bMainWindow && bCPURunning())
             {
@@ -901,7 +908,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
         break;
     case WM_SETFOCUS:
         {
-            CMainGui * _this = (CMainGui *)GetProp(hWnd, "Class");
+            CMainGui * _this = (CMainGui *)GetProp(hWnd, L"Class");
             if (_this->RomBrowserVisible())
             {
                 PostMessage(hWnd, WM_BROWSER_TOP, 0, 0);
@@ -919,7 +926,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
         break;
     case WM_KILLFOCUS:
         {
-            CMainGui * _this = (CMainGui *)GetProp(hWnd, "Class");
+            CMainGui * _this = (CMainGui *)GetProp(hWnd, L"Class");
             if (_this->RomBrowserVisible())
             {
                 break;
@@ -936,7 +943,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
         break;
     case WM_ACTIVATEAPP:
         {
-            CMainGui * _this = (CMainGui *)GetProp(hWnd, "Class");
+            CMainGui * _this = (CMainGui *)GetProp(hWnd, L"Class");
             DWORD fActive = (BOOL)wParam;
 
             if (fActive && _this->RomBrowserVisible())
@@ -976,19 +983,19 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
         break;
     case WM_MAKE_FOCUS:
         {
-            CMainGui * _this = (CMainGui *)GetProp(hWnd, "Class");
+            CMainGui * _this = (CMainGui *)GetProp(hWnd, L"Class");
             _this->BringToTop();
         }
         break;
     case WM_BROWSER_TOP:
         {
-            CMainGui * _this = (CMainGui *)GetProp(hWnd, "Class");
+            CMainGui * _this = (CMainGui *)GetProp(hWnd, L"Class");
             _this->RomBrowserToTop();
         }
         break;
     case WM_RESET_PLUGIN:
         {
-            CMainGui * _this = (CMainGui *)GetProp(hWnd, "Class");
+            CMainGui * _this = (CMainGui *)GetProp(hWnd, L"Class");
             if (_this->m_ResetInfo != NULL)
             {
                 g_Notify->BreakPoint(__FILE__, __LINE__);
@@ -999,7 +1006,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
         break;
     case WM_GAME_CLOSED:
         {
-            CMainGui * _this = (CMainGui *)GetProp(hWnd, "Class");
+            CMainGui * _this = (CMainGui *)GetProp(hWnd, L"Class");
             Notify().WindowMode();
             if (UISettingsLoadBool(RomBrowser_Enabled))
             {
@@ -1013,7 +1020,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
         break;
     case WM_COMMAND:
         {
-            CMainGui * _this = (CMainGui *)GetProp(hWnd, "Class");
+            CMainGui * _this = (CMainGui *)GetProp(hWnd, L"Class");
             if (_this == NULL) { break; }
 
             switch (LOWORD(wParam)) {
@@ -1068,13 +1075,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
                         }
                         else if (LOWORD(wParam) == ID_POPUPMENU_EDITCHEATS)
                         {
-                            CCheatsUI * cheatUI = new CCheatsUI;
-                            g_cheatUI = cheatUI;
-                            cheatUI->SelectCheats(hWnd, true);
-                            if (g_cheatUI == cheatUI)
-                            {
-                                g_cheatUI = NULL;
-                            }
+                            CCheatsUI().Display(hWnd, true);
                         }
 
                         if (g_Rom)
@@ -1103,13 +1104,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
                         }
                         else if (LOWORD(wParam) == ID_POPUPMENU_EDITCHEATS)
                         {
-                            CCheatsUI * cheatUI = new CCheatsUI;
-                            g_cheatUI = cheatUI;
-                            cheatUI->SelectCheats(hWnd, true);
-                            if (g_cheatUI == cheatUI)
-                            {
-                                g_cheatUI = NULL;
-                            }
+                            CCheatsUI().Display(hWnd,true);
                         }
 
                         if (g_Disk)
@@ -1180,7 +1175,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
             char filename[MAX_PATH];
 
             HDROP hDrop = (HDROP)wParam;
-            DragQueryFile(hDrop, 0, filename, sizeof(filename));
+            DragQueryFileA(hDrop, 0, filename, sizeof(filename));
             DragFinish(hDrop);
 
             stdstr ext = CPath(filename).GetExtension();
@@ -1197,7 +1192,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
     case WM_DESTROY:
         WriteTrace(TraceUserInterface, TraceDebug, "WM_DESTROY - start");
         {
-            CMainGui   * _this = (CMainGui *)GetProp(hWnd, "Class");
+            CMainGui   * _this = (CMainGui *)GetProp(hWnd, L"Class");
             if (_this->m_bMainWindow)
             {
                 Notify().WindowMode();
@@ -1212,7 +1207,7 @@ LRESULT CALLBACK CMainGui::MainGui_Proc(HWND hWnd, DWORD uMsg, DWORD wParam, DWO
             }
         }
         WriteTrace(TraceUserInterface, TraceDebug, "WM_DESTROY - 3");
-        RemoveProp(hWnd, "Class");
+        RemoveProp(hWnd, L"Class");
         WriteTrace(TraceUserInterface, TraceDebug, "WM_DESTROY - 4");
         PostQuitMessage(0);
         WriteTrace(TraceUserInterface, TraceDebug, "WM_DESTROY - Done");
@@ -1245,10 +1240,10 @@ DWORD CALLBACK AboutBoxProc(HWND hWnd, DWORD uMsg, DWORD wParam, DWORD /*lParam*
             BITMAP bmTL;
             GetObject(hbmpBackgroundTop, sizeof(BITMAP), &bmTL);
 
-            hTextFont = ::CreateFont((int)(18 * DPIScale), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial");
-            hAuthorFont = ::CreateFont((int)(18 * DPIScale), 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial");
+            hTextFont = ::CreateFont((int)(18 * DPIScale), 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"Arial");
+            hAuthorFont = ::CreateFont((int)(18 * DPIScale), 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"Arial");
 
-            hPageHeadingFont = ::CreateFont((int)(24 * DPIScale), 0, 0, 0, FW_BOLD, 0, FALSE, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial Bold");
+            hPageHeadingFont = ::CreateFont((int)(24 * DPIScale), 0, 0, 0, FW_BOLD, 0, FALSE, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"Arial Bold");
 
             SendDlgItemMessage(hWnd, IDC_VERSION, WM_SETFONT, (WPARAM)hTextFont, TRUE);
             SendDlgItemMessage(hWnd, IDC_TEAM, WM_SETFONT, (WPARAM)hPageHeadingFont, TRUE);
@@ -1267,7 +1262,7 @@ DWORD CALLBACK AboutBoxProc(HWND hWnd, DWORD uMsg, DWORD wParam, DWORD /*lParam*
             SendDlgItemMessage(hWnd, IDC_THANK_LIST, WM_SETFONT, (WPARAM)hTextFont, TRUE);
 
             stdstr_f VersionDisplay("Version: %s", VER_FILE_VERSION_STR);
-            SetWindowText(GetDlgItem(hWnd, IDC_VERSION), VersionDisplay.c_str());
+            SetWindowText(GetDlgItem(hWnd, IDC_VERSION), VersionDisplay.ToUTF16().c_str());
         }
         break;
     case WM_CTLCOLORSTATIC:

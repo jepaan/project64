@@ -151,6 +151,7 @@ void CSettings::AddHowToHandleSetting(const char * BaseDirectory)
 	AddHandler(Default_FixedAudio, new CSettingTypeApplication("Defaults", "Fixed Audio", true));
 	AddHandler(Default_UnalignedDMA, new CSettingTypeApplication("Defaults", "Unaligned DMA", false));
 	AddHandler(Default_RandomizeSIPIInterrupts, new CSettingTypeApplication("Defaults", "Randomize SI/PI Interrupts", true));
+	AddHandler(Default_SMM_Protect_Memory, new CSettingTypeApplication("Defaults", "SMM-Protect", false));
 
     AddHandler(Rdb_GoodName, new CSettingTypeRomDatabase("Good Name", Game_GameName));
 	AddHandler(Rdb_RPCKey, new CSettingTypeRomDatabase("RPC Key", Game_RPCKey));
@@ -188,7 +189,7 @@ void CSettings::AddHowToHandleSetting(const char * BaseDirectory)
     AddHandler(Rdb_SMM_StoreInstruc, new CSettingTypeRomDatabase("SMM-StoreInstr", false));
     AddHandler(Rdb_SMM_PIDMA, new CSettingTypeRomDatabase("SMM-PI DMA", true));
     AddHandler(Rdb_SMM_TLB, new CSettingTypeRomDatabase("SMM-TLB", true));
-    AddHandler(Rdb_SMM_Protect, new CSettingTypeRomDatabase("SMM-Protect", false));
+    AddHandler(Rdb_SMM_Protect, new CSettingTypeRomDatabase("SMM-Protect", Default_SMM_Protect_Memory));
     AddHandler(Rdb_SMM_ValidFunc, new CSettingTypeRomDatabase("SMM-FUNC", true));
     AddHandler(Rdb_GameCheatFix, new CSettingTypeRomDatabaseIndex("Cheat", "", ""));
     AddHandler(Rdb_GameCheatFixPlugin, new CSettingTypeRomDatabaseIndex("CheatPlugin", "", ""));
@@ -259,6 +260,7 @@ void CSettings::AddHowToHandleSetting(const char * BaseDirectory)
     AddHandler(Game_FullSpeed, new CSettingTypeTempBool(true, "Full Speed"));
     AddHandler(Game_UnalignedDMA, new CSettingTypeGame("Unaligned DMA", Rdb_UnalignedDMA));
     AddHandler(Game_RandomizeSIPIInterrupts, new CSettingTypeGame("Randomize SI/PI Interrupts", Rdb_RandomizeSIPIInterrupts));
+	AddHandler(Game_RPCKey, new CSettingTypeTempString(""));
 
     //User Interface
     AddHandler(UserInterface_ShowCPUPer, new CSettingTypeApplication("Settings", "Display CPU Usage", (uint32_t)false));
@@ -449,13 +451,9 @@ void CSettings::AddHowToHandleSetting(const char * BaseDirectory)
     AddHandler(Cheat_Entry, new CSettingTypeCheats("", Cheat_UserEntry));
     AddHandler(Cheat_Notes, new CSettingTypeCheats("_N", Cheat_UserNotes));
     AddHandler(Cheat_Options, new CSettingTypeCheats("_O", Cheat_UserOptions));
-    AddHandler(Cheat_Range, new CSettingTypeCheats("_R", Cheat_UserRange));
-    AddHandler(Cheat_RangeNotes, new CSettingTypeCheats("_RN", Cheat_UserRangeNotes));
     AddHandler(Cheat_UserEntry, new CSettingTypeGameIndex("Cheat", "", ""));
     AddHandler(Cheat_UserNotes, new CSettingTypeGameIndex("Cheat", "_N", ""));
     AddHandler(Cheat_UserOptions, new CSettingTypeGameIndex("Cheat", "_O", ""));
-    AddHandler(Cheat_UserRange, new CSettingTypeGameIndex("Cheat", "_R", ""));
-    AddHandler(Cheat_UserRangeNotes, new CSettingTypeGameIndex("Cheat", "_RN", ""));
     AddHandler(Cheat_Active, new CSettingTypeGameIndex("Cheat", "Active", false));
     AddHandler(Cheat_Extension, new CSettingTypeGameIndex("Cheat", ".exten", "??? - Not Set"));
 

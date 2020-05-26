@@ -26,6 +26,7 @@ Filename: "{app}\Project64.exe"; Description: "{cm:LaunchProgram,{#StringChange(
 Source: "{#BaseDir}\Bin\{#Configuration}\Project64.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#BaseDir}\Config\Video.rdb"; DestDir: "{app}\Config"
 Source: "{#BaseDir}\Config\Audio.rdb"; DestDir: "{app}\Config"
+Source: "{#BaseDir}\Config\Project64.cht"; DestDir: "{app}\Config"
 Source: "{#BaseDir}\Config\Project64.enh"; DestDir: "{app}\Config"
 Source: "{#BaseDir}\Config\Project64.rdb"; DestDir: "{app}\Config"
 Source: "{#BaseDir}\Config\Project64.rdx"; DestDir: "{app}\Config"
@@ -37,7 +38,7 @@ Source: "{#BaseDir}\Plugin\GFX\Project64-Video.dll"; DestDir: "{app}\Plugin\GFX"
 Source: "{#BaseDir}\Plugin\Input\PJ64_NRage.dll"; DestDir: "{app}\Plugin\Input"
 Source: "{#BaseDir}\Plugin\RSP\RSP 1.7.dll"; DestDir: "{app}\Plugin\RSP"
 Source: "{#BaseDir}\Scripts\example.js"; DestDir: "{app}\Scripts"
-Source: "{#BaseDir}\apidoc.htm"; DestDir: "{app}\apidoc.htm"
+Source: "{#BaseDir}\apidoc.htm"; DestDir: "{app}"
 
 [Dirs]
 Name: "{app}\Config"; Permissions: everyone-full

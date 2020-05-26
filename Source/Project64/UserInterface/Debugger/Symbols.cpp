@@ -44,6 +44,9 @@ symbol_type_info_t CSymbolTable::m_SymbolTypes[] = {
     { SYM_S64,    "s64",    8 },
     { SYM_FLOAT,  "float",  4 },
     { SYM_DOUBLE, "double", 8 },
+    { SYM_VECTOR2, "v2", 8 },
+    { SYM_VECTOR3, "v3", 12 },
+    { SYM_VECTOR4, "v4", 16 },
     { SYM_INVALID, NULL,    0 }
 };
 
@@ -135,7 +138,7 @@ void CSymbolTable::Load()
 
     if (g_Settings->LoadStringVal(Game_GameName).length() == 0)
     {
-        MessageBox(NULL, "Game must be loaded", "Symbols", MB_ICONWARNING | MB_OK);
+        MessageBox(NULL, L"Game must be loaded", L"Symbols", MB_ICONWARNING | MB_OK);
         return;
     }
     
@@ -310,6 +313,7 @@ void CSymbolTable::GetValueString(char* dst, CSymbol* symbol)
 
     uint32_t address = symbol->m_Address;
 
+    float xyzw[4];
     switch (symbol->m_Type)
     {
     case SYM_CODE:
@@ -356,6 +360,27 @@ void CSymbolTable::GetValueString(char* dst, CSymbol* symbol)
         m_Debugger->DebugLoad_VAddr(address, value.f64);
         sprintf(dst, "%f", value.f64);
         break;
+    case SYM_VECTOR2:
+        for (int i = 0; i < 2; i++) {
+            m_Debugger->DebugLoad_VAddr(address + (i * sizeof(float)), value.f32);
+            xyzw[i] = value.f32;
+        }
+        sprintf(dst, "%f, %f", xyzw[0], xyzw[1]);
+        break;
+    case SYM_VECTOR3:
+        for (int i = 0; i < 3; i++) {
+            m_Debugger->DebugLoad_VAddr(address + (i * sizeof(float)), value.f32);
+            xyzw[i] = value.f32;
+        }
+        sprintf(dst, "%f, %f, %f", xyzw[0], xyzw[1], xyzw[2]);
+        break;
+    case SYM_VECTOR4:
+        for (int i = 0; i < 4; i++) {
+            m_Debugger->DebugLoad_VAddr(address + (i * sizeof(float)), value.f32);
+            xyzw[i] = value.f32;
+        }
+        sprintf(dst, "%f, %f, %f, %f", xyzw[0], xyzw[1], xyzw[2], xyzw[3]);
+        break;
     default:
         g_Notify->BreakPoint(__FILE__, __LINE__);
         break;
@@ -365,7 +390,7 @@ void CSymbolTable::GetValueString(char* dst, CSymbol* symbol)
 void CSymbolTable::ParseErrorAlert(char* message, int lineNumber)
 {
     stdstr messageFormatted = stdstr_f("%s\nLine %d", message, lineNumber);
-    MessageBox(NULL, messageFormatted.c_str(), "Parse error", MB_OK | MB_ICONWARNING);
+    MessageBox(NULL, messageFormatted.ToUTF16().c_str(), L"Parse error", MB_OK | MB_ICONWARNING);
 }
 
 void CSymbolTable::Reset()
@@ -379,7 +404,7 @@ bool CSymbolTable::CmpSymbolAddresses(CSymbol& a, CSymbol& b)
     return (a.m_Address < b.m_Address);
 }
 
-void CSymbolTable::AddSymbol(int type, uint32_t address, char* name, char* description)
+void CSymbolTable::AddSymbol(int type, uint32_t address, const char* name, const char* description)
 {
     CGuard guard(m_CS);
 
